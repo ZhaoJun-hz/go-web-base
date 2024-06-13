@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"fmt"
 	"github.com/ZhaoJun-hz/go-web-base/conf"
 	"github.com/ZhaoJun-hz/go-web-base/router"
 )
@@ -11,5 +12,5 @@ func Start() {
 }
 
 func Clean() {
-
+	fmt.Println("Clean")
 }
