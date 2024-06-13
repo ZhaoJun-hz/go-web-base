@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/ZhaoJun-hz/go-web-base/global"
+	"github.com/ZhaoJun-hz/go-web-base/middleware"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 	"net/http"
@@ -30,6 +31,7 @@ func InitRouter() {
 	ctx, cancelContext := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer cancelContext()
 	engine := gin.Default()
+	engine.Use(middleware.Cors())
 
 	rgPublic := engine.Group("/api/v1/public")
 	rgAuth := engine.Group("/api/v1/")
