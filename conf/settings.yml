@@ -13,3 +13,6 @@ log:
   maxSize: 10
   maxBackups: 10
   maxAge: 90
+
+redis:
+  url: 192.168.1.101:6379

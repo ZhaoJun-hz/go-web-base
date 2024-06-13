@@ -17,6 +17,12 @@ func Start() {
 		panic(fmt.Sprintf("init db error: %s\n", err.Error()))
 	}
 	global.DB = db
+	redisClient, err := conf.InitRedis()
+	if err != nil {
+		global.Logger.Error("init redis client error", zap.Error(err))
+		panic(fmt.Sprintf("init redis client error: %s\n", err.Error()))
+	}
+	global.RedisClient = redisClient
 	router.InitRouter()
 }
 
