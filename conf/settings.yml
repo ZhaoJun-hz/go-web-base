@@ -1,2 +1,11 @@
+mode:
+  develop: true
+
 server:
   port: 9876
+
+
+log:
+  maxSize: 10
+  maxBackups: 10
+  maxAge: 90

@@ -3,6 +3,7 @@ package router
 import (
 	"context"
 	"fmt"
+	"github.com/ZhaoJun-hz/go-web-base/global"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 	"net/http"
@@ -49,8 +50,9 @@ func InitRouter() {
 	}
 
 	go func() {
+		global.Logger.Info("start http server on ", server.Addr)
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			fmt.Println(fmt.Sprintf("start http server err: %s", err.Error()))
+			global.Logger.Error(fmt.Sprintf("start http server err: %s", err.Error()))
 			return
 		}
 	}()
@@ -59,10 +61,10 @@ func InitRouter() {
 	ctx, cancelShutdown := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancelShutdown()
 	if err := server.Shutdown(ctx); err != nil {
-		fmt.Println(fmt.Sprintf("http server shutdown err: %s", err.Error()))
+		global.Logger.Error(fmt.Sprintf("http server shutdown err: %s", err.Error()))
 		return
 	}
-	fmt.Println(fmt.Sprintf("http server shutdown success"))
+	global.Logger.Info(fmt.Sprintf("http server shutdown success"))
 }
 
 func InitBasePlatformRoutes() {

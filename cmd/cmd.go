@@ -1,16 +1,17 @@
 package cmd
 
 import (
-	"fmt"
 	"github.com/ZhaoJun-hz/go-web-base/conf"
+	"github.com/ZhaoJun-hz/go-web-base/global"
 	"github.com/ZhaoJun-hz/go-web-base/router"
 )
 
 func Start() {
 	conf.InitConfig()
+	global.Logger = conf.InitLogger()
 	router.InitRouter()
 }
 
 func Clean() {
-	fmt.Println("Clean")
+	global.Logger.Info("Clean")
 }

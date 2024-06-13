@@ -2,7 +2,6 @@ package test
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/fs"
 	"os"
 	"path/filepath"
@@ -66,7 +65,6 @@ func createDir(path string) {
 	if path == "" {
 		return
 	}
-	fmt.Println(path)
 	err := os.MkdirAll(stRootDir+stSeparator+path, fs.ModePerm)
 	if err != nil {
 		panic("createDir Error: " + err.Error())
