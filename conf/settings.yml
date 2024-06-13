@@ -4,6 +4,10 @@ mode:
 server:
   port: 9876
 
+db:
+  dsn: root:12345678@tcp(192.168.1.101:3306)/go-common-web?charset=utf8mb4&parseTime=True&loc=Local
+  maxIdleConn: 10
+  maxOpenConn: 20
 
 log:
   maxSize: 10
