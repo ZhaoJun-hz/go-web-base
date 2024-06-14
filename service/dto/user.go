@@ -1,10 +1,22 @@
 package dto
 
-import "github.com/ZhaoJun-hz/go-web-base/model"
+import (
+	"github.com/ZhaoJun-hz/go-web-base/model"
+)
 
 type UserLoginDTO struct {
 	Username string `json:"username" binding:"required" message:"用户名填写错误" required_err:"用户名不能为空"`
 	Password string `json:"password" binding:"required" message:"密码不能为空"`
+}
+
+type UserRegisterDTO struct {
+	Username string `json:"username" binding:"required" message:"用户名填写错误" required_err:"用户名不能为空"`
+	Password string `json:"password" binding:"required" message:"密码不能为空"`
+}
+
+func (m *UserRegisterDTO) CovertToModel(user *model.User) {
+	user.UserName = m.Username
+	user.Password = m.Password
 }
 
 type UserAddDTO struct {

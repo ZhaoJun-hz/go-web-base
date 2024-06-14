@@ -20,6 +20,12 @@ func NewUserDao() *UserDao {
 	return userDao
 }
 
+func (m *UserDao) GetUserByName(username string) (model.User, error) {
+	var user model.User
+	err := userDao.Orm.Model(&user).Where("user_name = ? ", username).Find(&user).Error
+	return user, err
+}
+
 func (m *UserDao) GetUserByNameAndPassword(username string, password string) model.User {
 	var user model.User
 	tx := userDao.Orm.Model(&user).Where("user_name = ? and password = ?", username, password).Find(&user)
@@ -70,4 +76,11 @@ func (m *UserDao) UpdateUser(dto *dto.UserUpdateDTO) error {
 
 func (m *UserDao) DeleteUser(id uint) error {
 	return m.Orm.Delete(&model.User{}, id).Error
+}
+
+func (m *UserDao) Register(dto dto.UserRegisterDTO) error {
+	var user model.User
+	dto.CovertToModel(&user)
+	err := userDao.Orm.Save(&user).Error
+	return err
 }

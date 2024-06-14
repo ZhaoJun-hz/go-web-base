@@ -1,11 +1,17 @@
 package api
 
 import (
+	"context"
 	"fmt"
+	"github.com/ZhaoJun-hz/go-web-base/global"
+	"github.com/ZhaoJun-hz/go-web-base/global/constants"
 	"github.com/ZhaoJun-hz/go-web-base/service"
 	"github.com/ZhaoJun-hz/go-web-base/service/dto"
-	"github.com/ZhaoJun-hz/go-web-base/utils"
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
+	"strconv"
+	"strings"
+	"time"
 )
 
 const (
@@ -14,6 +20,8 @@ const (
 	ERR_CODE_GET_USER_LIST = 10013
 	ERR_CODE_UPDATE_USER   = 10014
 	ERR_CODE_DELETE_USER   = 10015
+	ERR_CODE_REGISTER_USER = 10016
+	ERR_CODE_LOGIN         = 10017
 )
 
 type UserApi struct {
@@ -33,20 +41,42 @@ func (m UserApi) Login(ctx *gin.Context) {
 	if err := m.BuildRequest(BuildRequestOption{Ctx: ctx, DTO: &userLoginDTO}).GetError(); err != nil {
 		return
 	}
-	user, err := m.Service.Login(userLoginDTO)
+	user, token, err := m.Service.Login(userLoginDTO)
+	if err == nil {
+		global.RedisClient.Set(context.Background(),
+			strings.ReplaceAll(constants.LOGIN_USER_TOKEN_REDIS_KEY, "{ID}", strconv.Itoa(int(user.ID))),
+			token,
+			viper.GetDuration("jwt.tokenExpire")*time.Minute)
+	}
 	if err != nil {
 		m.Fail(Response{
-			Msg: err.Error(),
+			Code: ERR_CODE_LOGIN,
+			Msg:  err.Error(),
 		})
 		return
 	}
-	token, _ := utils.GeneratorToken(user.ID)
 	m.OK(Response{
 		Data: gin.H{
 			"token": token,
 			"user":  user,
 		},
 	})
+}
+
+func (m UserApi) Register(ctx *gin.Context) {
+	var dto dto.UserRegisterDTO
+	if err := m.BuildRequest(BuildRequestOption{Ctx: ctx, DTO: &dto}).GetError(); err != nil {
+		return
+	}
+	err := m.Service.Register(dto)
+	if err != nil {
+		m.ServerFail(Response{
+			Code: ERR_CODE_REGISTER_USER,
+			Msg:  err.Error(),
+		})
+		return
+	}
+	m.OK(Response{})
 }
 
 func (m UserApi) AddUser(ctx *gin.Context) {

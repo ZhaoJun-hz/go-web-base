@@ -11,6 +11,7 @@ func InitUserRouter() {
 		userRgPublic := rgPublic.Group("/user")
 		{
 			userRgPublic.POST("/login", userApi.Login)
+			userRgPublic.POST("/register", userApi.Register)
 		}
 
 		userRgAuth := rgAuth.Group("/user")

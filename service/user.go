@@ -5,6 +5,7 @@ import (
 	"github.com/ZhaoJun-hz/go-web-base/dao"
 	"github.com/ZhaoJun-hz/go-web-base/model"
 	"github.com/ZhaoJun-hz/go-web-base/service/dto"
+	"github.com/ZhaoJun-hz/go-web-base/utils"
 )
 
 var userService *UserService
@@ -23,13 +24,28 @@ func NewUserService() *UserService {
 	return userService
 }
 
-func (m *UserService) Login(userLoginDto dto.UserLoginDTO) (model.User, error) {
+func (m *UserService) Login(dto dto.UserLoginDTO) (model.User, string, error) {
 	var errResult error
-	user := userService.Dao.GetUserByNameAndPassword(userLoginDto.Username, userLoginDto.Password)
-	if user.ID == 0 {
+	var token string
+
+	user, err := userService.Dao.GetUserByName(dto.Username)
+	if err != nil || !utils.CompareHashAndPassword(user.Password, dto.Password) {
 		errResult = errors.New("Invalid username or password")
+	} else {
+		token, err = utils.GeneratorToken(user.ID)
+		if err != nil {
+			errResult = errors.New("Generate token failed")
+		}
+
 	}
-	return user, errResult
+	return user, token, errResult
+}
+
+func (m *UserService) Register(dto dto.UserRegisterDTO) error {
+	if m.Dao.CheckUserNameExist(dto.Username) {
+		return errors.New("UserName already exists")
+	}
+	return m.Dao.Register(dto)
 }
 
 func (m *UserService) AddUser(userAddDto *dto.UserAddDTO) error {
