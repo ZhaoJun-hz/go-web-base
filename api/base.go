@@ -25,9 +25,10 @@ func NewBaseApi() BaseApi {
 }
 
 type BuildRequestOption struct {
-	Ctx               *gin.Context
-	DTO               any
-	BindParamsFromUri bool
+	Ctx     *gin.Context
+	DTO     any
+	BindUri bool
+	BindAll bool
 }
 
 func (baseApi *BaseApi) BuildRequest(option BuildRequestOption) *BaseApi {
@@ -37,10 +38,11 @@ func (baseApi *BaseApi) BuildRequest(option BuildRequestOption) *BaseApi {
 
 	// 绑定请求数据
 	if option.DTO != nil {
-		if option.BindParamsFromUri {
-			errResult = baseApi.Ctx.ShouldBindUri(option.DTO)
-		} else {
-			errResult = baseApi.Ctx.ShouldBind(option.DTO)
+		if option.BindUri || option.BindAll {
+			errResult = utils.AppendError(errResult, baseApi.Ctx.ShouldBindUri(option.DTO))
+		}
+		if !option.BindUri || option.BindAll {
+			errResult = utils.AppendError(errResult, baseApi.Ctx.ShouldBind(option.DTO))
 		}
 
 		if errResult != nil {
