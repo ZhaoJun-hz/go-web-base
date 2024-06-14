@@ -35,6 +35,7 @@ func InitRouter() {
 
 	rgPublic := engine.Group("/api/v1/public")
 	rgAuth := engine.Group("/api/v1/")
+	rgAuth.Use(middleware.Auth())
 
 	InitBasePlatformRoutes()
 	for _, fnRegisterRoute := range gfnRoutes {
